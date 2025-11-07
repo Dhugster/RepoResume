@@ -3,7 +3,7 @@
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "",
     "devPath": "http://localhost:5173",
-    "distDir": "../frontend/dist"
+    "distDir": "../../frontend/dist"
   },
   "package": {
     "productName": "RepoResume",
