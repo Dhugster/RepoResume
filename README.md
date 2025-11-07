@@ -24,7 +24,31 @@
 - **🎨 Theme Support**: Light and dark mode
 - **⚡ Real-time Updates**: Live repository status updates
 
-## 🚀 Quick Start (10 minutes setup)
+## 🚀 Quick Start
+
+### 🖥️ Desktop App (Easiest - Runs in System Tray!)
+
+**Want a lightweight exe that runs in the corner? (~50MB RAM, ~8MB file)**
+
+```bash
+# 1. Install Rust (one-time): https://rustup.rs/
+# 2. Build desktop app
+npm run build:desktop:windows  # Creates repo-resume.exe
+
+# 3. Run it - minimizes to system tray!
+# Find exe in: desktop/src-tauri/target/release/
+```
+
+✅ **Single executable file**  
+✅ **Runs in system tray with low resources**  
+✅ **Auto-starts with Windows (optional)**  
+✅ **Background monitoring and notifications**
+
+📖 See **DESKTOP_QUICKSTART.md** for full instructions
+
+---
+
+### 🌐 Web App (Full-Featured)
 
 ### Prerequisites
 - Node.js >= 18.0.0

@@ -1,0 +1,23 @@
+{
+  "name": "repo-resume-desktop",
+  "version": "1.0.0",
+  "description": "RepoResume Desktop - Lightweight system tray app",
+  "private": true,
+  "scripts": {
+    "tauri": "tauri",
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "build:windows": "tauri build --target x86_64-pc-windows-msvc",
+    "build:mac": "tauri build --target x86_64-apple-darwin",
+    "build:linux": "tauri build --target x86_64-unknown-linux-gnu"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^1.5.3"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.5.9",
+    "vite": "^5.0.8"
+  }
+}
+
+
