@@ -18,6 +18,7 @@ const swaggerSetup = require('./config/swagger');
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 3001;
+const isProduction = process.env.NODE_ENV === 'production';
 
 // Trust proxy for rate limiting behind reverse proxy
 app.set('trust proxy', 1);
@@ -61,7 +62,7 @@ const allowedOrigins = [
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, Postman, etc.) in development only
-    if (!origin && process.env.NODE_ENV !== 'production') {
+    if (!origin && !isProduction) {
       return callback(null, true);
     }
     
@@ -119,7 +120,7 @@ app.use(session({
     // For Tauri HTTPS (https://tauri.localhost) -> HTTP backend (localhost:3001)
     // Browsers allow secure cookies on localhost even over HTTP in development
     // In production with HTTPS backend, this should be true
-    secure: process.env.NODE_ENV === 'production' || process.env.FORCE_HTTPS === 'true',
+    secure: isProduction || process.env.FORCE_HTTPS === 'true',
     httpOnly: true,
     // 'lax' allows cookies in cross-origin GET requests (Tauri -> localhost:3001)
     // Changed from 'strict' which blocks all cross-origin cookie sending
@@ -191,7 +192,7 @@ const startServer = async () => {
     logger.info('Database connection established successfully');
 
     // Sync models (in development only, use migrations in production)
-    if (process.env.NODE_ENV !== 'production') {
+    if (!isProduction) {
       await sequelize.sync({ alter: true });
       logger.info('Database synchronized');
     }
