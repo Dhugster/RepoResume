@@ -71,8 +71,30 @@ app.use(cors({
     if (origin.startsWith('tauri://')) return true;
     try {
       const parsed = new URL(origin);
-      return parsed.hostname === 'tauri.localhost';
-    } catch {
+      if (parsed.hostname === 'tauri.localhost') {
+        return true;
+      }
+
+      // Allow dynamic ports for any explicitly configured host
+      return allowedOrigins.some((allowed) => {
+        if (!allowed || allowed.startsWith('tauri://')) {
+          return false;
+        }
+        try {
+          const allowedUrl = new URL(allowed);
+          return (
+            allowedUrl.hostname === parsed.hostname &&
+            allowedUrl.protocol === parsed.protocol
+          );
+        } catch {
+          return false;
+        }
+      });
+    } catch (error) {
+      logger.warn('Failed to parse origin for CORS check', {
+        origin,
+        error: error.message
+      });
       return false;
     }
   })();
