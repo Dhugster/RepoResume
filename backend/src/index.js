@@ -200,8 +200,25 @@ const startServer = async () => {
 
     // Sync models (in development only, use migrations in production)
     if (process.env.NODE_ENV !== 'production') {
-      await sequelize.sync({ alter: true });
-      logger.info('Database synchronized');
+      const preferAlter = process.env.SEQUELIZE_SYNC_ALTER !== 'false';
+      const dialect = sequelize.getDialect();
+      const canAlter = preferAlter && dialect !== 'sqlite';
+
+      if (preferAlter && !canAlter) {
+        logger.warn(
+          'Skipping Sequelize alter sync for SQLite to avoid foreign key constraint issues. ' +
+          'Set SEQUELIZE_SYNC_ALTER=false to silence this warning.'
+        );
+      }
+
+      try {
+        const syncOptions = canAlter ? { alter: true } : undefined;
+        await sequelize.sync(syncOptions);
+        logger.info(`Database synchronized${canAlter ? ' (alter)' : ''}`);
+      } catch (syncError) {
+        logger.error('Database synchronization failed:', syncError);
+        throw syncError;
+      }
     }
 
     // Start server
