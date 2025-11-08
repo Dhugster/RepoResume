@@ -226,9 +226,9 @@ npm run test:e2e
 
 ## Community
 
-- Join our [Discord server](https://discord.gg/reporesume) (if applicable)
-- Follow us on [Twitter](https://twitter.com/reporesume) (if applicable)
-- Check out our [blog](https://blog.reporesume.com) (if applicable)
+- Join our [Discord server](https://discord.gg/AgeisAI) 
+- Follow us on [Twitter](https://twitter.com/ageis.ai) 
+- Check out our [Instagram](https://instagram.com/ageis.ai) 
 
 ## Questions?
 
