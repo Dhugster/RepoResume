@@ -65,19 +65,19 @@ app.use(cors({
       return callback(null, true);
     }
 
-    const isExplicitlyAllowed = origin && allowedOrigins.includes(origin);
-    const isTauriOrigin = (() => {
-      if (!origin) return false;
-      if (origin.startsWith('tauri://')) return true;
-      try {
-        const parsed = new URL(origin);
-        return parsed.hostname === 'tauri.localhost';
-      } catch {
-        return false;
-      }
-    })();
+  const isExplicitlyAllowed = origin && allowedOrigins.includes(origin);
+  const isTauriOrigin = (() => {
+    if (!origin) return false;
+    if (origin.startsWith('tauri://')) return true;
+    try {
+      const parsed = new URL(origin);
+      return parsed.hostname === 'tauri.localhost';
+    } catch {
+      return false;
+    }
+  })();
 
-    if (!origin || isExplicitlyAllowed || isTauriOrigin) {
+  if (!origin || isExplicitlyAllowed || isTauriOrigin) {
       callback(null, true);
     } else {
       callback(new Error(`CORS: Origin ${origin} not allowed`));
