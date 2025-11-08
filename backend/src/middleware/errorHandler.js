@@ -73,17 +73,30 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Default error response
+  // Default error response - sanitize for production
   const statusCode = err.statusCode || 500;
+  const isProduction = process.env.NODE_ENV === 'production';
   const message = err.message || 'Internal server error';
-
-  res.status(statusCode).json({
+  
+  // Never expose stack traces or detailed errors in production
+  const response = {
     error: 'Error',
-    message: process.env.NODE_ENV === 'production' && statusCode === 500 
-      ? 'An unexpected error occurred' 
-      : message,
-    ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })
-  });
+    message: isProduction && statusCode === 500
+      ? 'An unexpected error occurred'
+      : message
+  };
+  
+  // Only include stack trace in development
+  if (!isProduction && err.stack) {
+    response.stack = err.stack;
+  }
+  
+  // Never expose internal error details in production
+  if (!isProduction && err.details) {
+    response.details = err.details;
+  }
+  
+  res.status(statusCode).json(response);
 };
 
 /**

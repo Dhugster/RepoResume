@@ -1,6 +1,22 @@
 const CryptoJS = require('crypto-js');
 
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'default-encryption-key-change-in-production-32chars';
+// CRITICAL: Encryption key must be set via environment variable
+// Minimum 32 characters recommended for AES-256
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
+
+if (!ENCRYPTION_KEY) {
+  throw new Error(
+    'ENCRYPTION_KEY environment variable is required. ' +
+    'Set a strong random key (minimum 32 characters) in your .env file.'
+  );
+}
+
+if (ENCRYPTION_KEY.length < 32) {
+  throw new Error(
+    'ENCRYPTION_KEY must be at least 32 characters long for security. ' +
+    'Current length: ' + ENCRYPTION_KEY.length
+  );
+}
 
 /**
  * Encrypt a string

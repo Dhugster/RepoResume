@@ -46,7 +46,9 @@ const config = {
     dialectOptions: {
       ssl: process.env.DATABASE_SSL === 'true' ? {
         require: true,
-        rejectUnauthorized: false
+        rejectUnauthorized: process.env.DATABASE_REJECT_UNAUTHORIZED !== 'false', // Default to true for security
+        // For production, provide CA certificate:
+        // ca: process.env.DATABASE_CA_CERT ? require('fs').readFileSync(process.env.DATABASE_CA_CERT) : undefined
       } : false
     }
   }
