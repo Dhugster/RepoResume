@@ -53,7 +53,9 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
   'http://localhost:5173',
   'http://localhost:3000',
-  'tauri://localhost', // For desktop app
+  'tauri://localhost',        // Tauri protocol (legacy)
+  'https://tauri.localhost',  // Tauri HTTPS protocol (current)
+  'http://tauri.localhost',   // Tauri HTTP protocol (fallback)
 ].filter(Boolean);
 
 app.use(cors({
@@ -63,17 +65,18 @@ app.use(cors({
       return callback(null, true);
     }
     
+    // Allow if origin is in allowed list or if no origin (same-origin requests)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error(`CORS: Origin ${origin} not allowed`));
     }
   },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
+  credentials: true,  // Required for cookies and authentication
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],  // Include OPTIONS for preflight
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'X-Requested-With'],
   exposedHeaders: ['X-CSRF-Token'],
-  maxAge: 86400 // 24 hours
+  maxAge: 86400 // 24 hours - how long browser caches preflight response
 }));
 
 // Compression
@@ -113,11 +116,16 @@ app.use(session({
   saveUninitialized: false,
   name: 'repo-resume.sid', // Don't use default 'connect.sid'
   cookie: {
+    // For Tauri HTTPS (https://tauri.localhost) -> HTTP backend (localhost:3001)
+    // Browsers allow secure cookies on localhost even over HTTP in development
+    // In production with HTTPS backend, this should be true
     secure: process.env.NODE_ENV === 'production' || process.env.FORCE_HTTPS === 'true',
     httpOnly: true,
-    sameSite: 'strict', // CSRF protection
+    // 'lax' allows cookies in cross-origin GET requests (Tauri -> localhost:3001)
+    // Changed from 'strict' which blocks all cross-origin cookie sending
+    sameSite: 'lax', // Allows cross-origin requests from Tauri
     maxAge: 8 * 60 * 60 * 1000, // 8 hours (reduced from 24)
-    domain: process.env.COOKIE_DOMAIN // Explicit domain if needed
+    domain: process.env.COOKIE_DOMAIN // Explicit domain if needed (leave undefined for localhost)
   }
 }));
 
