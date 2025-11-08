@@ -44,9 +44,21 @@ api.interceptors.response.use(
 
 // Auth API
 export const authAPI = {
-  getCurrentUser: () => api.get('/auth/me'),
+  getCurrentUser: async () => {
+    try {
+      return await api.get('/auth/me');
+    } catch (error) {
+      // 401 is expected when not logged in - return null instead of throwing
+      if (error.response?.status === 401) {
+        return null;
+      }
+      // Re-throw other errors
+      throw error;
+    }
+  },
   logout: () => api.post('/auth/logout'),
   loginWithGithub: () => {
+    // Redirect to GitHub OAuth
     window.location.href = `${API_BASE_URL}/auth/github`;
   },
 };
