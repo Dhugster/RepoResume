@@ -32,6 +32,11 @@ api.interceptors.response.use(
     return response.data;
   },
   (error) => {
+    // Don't modify 401 errors - let them be handled by the calling code
+    // 401 is expected when user is not logged in
+    if (error.response?.status === 401) {
+      return Promise.reject(error);
+    }
     const message = error.response?.data?.message || error.message || 'An error occurred';
     return Promise.reject({ ...error, message });
   }
