@@ -53,7 +53,8 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
   'http://localhost:5173',
   'http://localhost:3000',
-  'tauri://localhost', // For desktop app
+  'tauri://localhost', // For desktop app (legacy)
+  'https://tauri.localhost', // Tauri dev server (new scheme)
 ].filter(Boolean);
 
 app.use(cors({
